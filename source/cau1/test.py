@@ -4,10 +4,10 @@ import sys
 sys.setrecursionlimit(100000)
 
 def main():
-    problem = Problem(size = 4)
+    problem = Problem(size = 8)
     while True:
-        problem.print()
-        
+        print(problem)
+
         if problem.current_player == 'X':
             action = AlphaBetaSearch.alpha_beta_search(problem)
             problem.make_move(action)
@@ -18,10 +18,10 @@ def main():
                 if problem.make_move(action) is True:
                     break
                 else:
-                     print("Invalid move. Please try again!")
+                    print("Invalid move. Please try again!")
 
         if problem.terminal(problem.board):
-            problem.print()
+            print(problem)
             print("Game over!")
             break
 
