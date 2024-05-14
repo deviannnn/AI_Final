@@ -100,9 +100,10 @@ class Problem:
         return False
     
     def evaluate(self, board):
-        current_player = 'X' if self.player(board) == 'O' else 'O'
-        player_score = self.evaluate_player(board, current_player)
-        return player_score
+        player_score_x = self.evaluate_player(board, 'X')
+        # player_score_o = self.evaluate_player(board, 'O')
+        player_score_o = 0
+        return player_score_x - player_score_o
 
     def evaluate_player(self, board, current_player):
         opponent_player = 'O' if current_player == 'X' else 'X'
@@ -112,55 +113,65 @@ class Problem:
         for i in range(self.size):
             for j in range(self.size):
                 if board[i][j] == opponent_player and not visited[i][j]:
-                    streak_horizontal = self.check_streak(board, i, j, opponent_player, 0, 1, visited)
-                    streak_vertical = self.check_streak(board, i, j, opponent_player, 1, 0, visited)
-                    streak_diagonal_down_right = self.check_streak(board, i, j, opponent_player, 1, 1, visited)
-                    streak_diagonal_up_right = self.check_streak(board, i, j, opponent_player, -1, 1, visited)
-
+                    streak_horizontal = self.check_streak(board, i, j, current_player, opponent_player, 0, 1, visited)
+                    streak_vertical = self.check_streak(board, i, j, current_player, opponent_player, 1, 0, visited)
+                    streak_diagonal_down_right = self.check_streak(board, i, j, current_player, opponent_player, 1, 1, visited)
+                    streak_diagonal_up_right = self.check_streak(board, i, j, current_player, opponent_player, -1, 1, visited)
+                    
+                    # print(streak_horizontal, streak_vertical, streak_diagonal_down_right, streak_diagonal_up_right)
+                    
                     if streak_horizontal > 0:
                         if 0 <= (j-1) < 8:
 
                             if board[i][j-1] == current_player:
-                                score += 5 * streak_horizontal + self.count_empty_spaces_around(board, i, j-1)
+                                score += 5 * streak_horizontal + self.rank_of_place(i, j-1)
+                                # + self.count_empty_spaces_around(board, i, j-1)
 
                         if 0 <= (j+streak_horizontal) < 8:
 
                             if board[i][j+streak_horizontal] == current_player:
-                                score += 5 * streak_horizontal + self.count_empty_spaces_around(board, i, j+streak_horizontal)
-
+                                score += 5 * streak_horizontal + self.rank_of_place(i, j+streak_horizontal)
+                                # + self.count_empty_spaces_around(board, i, j+streak_horizontal)
+                    
                     if streak_vertical > 0:
                         if 0 <= (i-1) < 8:
 
                             if board[i-1][j] == current_player:
-                                score += 5 * streak_vertical + self.count_empty_spaces_around(board, i-1, j)
+                                score += 5 * streak_vertical + self.rank_of_place(i-1, j)
+                                #+ self.count_empty_spaces_around(board, i-1, j)
 
                         if 0 <= (i+streak_vertical) < 8:
 
                             if board[i+streak_vertical][j] == current_player:
-                                score += 5 * streak_vertical + self.count_empty_spaces_around(board, i+streak_vertical, j)
+                                score += 5 * streak_vertical + self.rank_of_place(i+streak_vertical, j)
+                                #+ self.count_empty_spaces_around(board, i+streak_vertical, j)
 
                     if streak_diagonal_down_right > 0:
                         if 0 <= (i-1) < 8 and 0 <= (j-1) < 8:
 
                             if board[i-1][j-1] == current_player:
-                                score += 5 * streak_diagonal_down_right + self.count_empty_spaces_around(board, i-1, j-1)
+                                score += 5 * streak_diagonal_down_right + self.rank_of_place(i-1, j-1)
+                                #+ self.count_empty_spaces_around(board, i-1, j-1)
 
                         if 0 <= (i+streak_diagonal_down_right) < 8 and 0 <= (j+streak_diagonal_down_right) < 8:
 
                             if board[i+streak_diagonal_down_right][j+streak_diagonal_down_right] == current_player:
-                                score += 5 * streak_diagonal_down_right + self.count_empty_spaces_around(board, i+streak_diagonal_down_right, j+streak_diagonal_down_right)
+                                score += 5 * streak_diagonal_down_right + self.rank_of_place(i+streak_diagonal_down_right, j+streak_diagonal_down_right)
+                                #+ self.count_empty_spaces_around(board, i+streak_diagonal_down_right, j+streak_diagonal_down_right)
 
                     if streak_diagonal_up_right > 0:
                         if 0 <= (i+1) < 8 and 0 <= (j-1) < 8:
 
                             if board[i+1][j-1] == current_player:
-                                score += 5 * streak_diagonal_up_right + self.count_empty_spaces_around(board, i+1, j-1)
+                                score += 5 * streak_diagonal_up_right + self.rank_of_place(i+1, j-1)
+                                #+ self.count_empty_spaces_around(board, i+1, j-1)
 
                         if 0 <= (i-streak_diagonal_up_right) < 8 and 0 <= (j+streak_diagonal_up_right) < 8:
 
                             if board[i-streak_diagonal_up_right][j+streak_diagonal_up_right] == current_player:
-                                score += 5 * streak_diagonal_up_right + self.count_empty_spaces_around(board, i-streak_diagonal_up_right, j+streak_diagonal_up_right)
-
+                                score += 5 * streak_diagonal_up_right + self.rank_of_place(i-streak_diagonal_up_right, j+streak_diagonal_up_right)
+                                #+ self.count_empty_spaces_around(board, i-streak_diagonal_up_right, j+streak_diagonal_up_right)
+                    
         return score
 
     def count_empty_spaces_around(self, board, x, y):
@@ -176,6 +187,14 @@ class Problem:
                     new_y += dy
         return empty_spaces_count
 
+    def rank_of_place(self, x, y):
+        score = 0
+        for i in range(self.size):
+            if i <= x < self.size - i and i <= y < self.size - i:
+                score += 5
+
+        return score
+                
         
     def count_consecutive_pieces(self, board, x, y, player, visited):
         score = 0
@@ -202,7 +221,7 @@ class Problem:
 
         return score
 
-    def check_streak(self, board, x, y, player, dx, dy, visited):
+    def check_streak(self, board, x, y, player, opponent, dx, dy, visited):
         streak = 1
         visited[x][y] = True  # Đánh dấu ô hiện tại đã được xem xét
         # Kiểm tra các ô tiếp theo trong hướng đã xác định
@@ -214,11 +233,20 @@ class Problem:
             if 0 <= new_x < 8 and 0 <= new_y < 8:
 
                 # Kiểm tra nếu ô mới chứa quân cờ của player hiện tại
-                if board[new_x][new_y] == player:
+                if board[new_x][new_y] == opponent:
                     streak += 1
                     visited[new_x][new_y] = True  # Đánh dấu ô mới đã được xem xét
-                else:
-                    break  # Ngắt nếu không phải quân cờ của player hiện tại
+
+                elif board[new_x][new_y] == player:
+                    break # Ngắt nếu không phải quân cờ của player hiện tại
+
+                if board[new_x][new_y] == ' ':
+                    next_x = new_x + i * dx
+                    next_y = new_y + i * dy
+                    if 0 <= next_x < 8 and 0 <= next_y < 8:
+                        if board[next_x][next_y] == opponent:
+                            streak += 1
+                    break 
             else:
                 break  # Ngắt nếu vượt quá giới hạn của bàn cờ
 
