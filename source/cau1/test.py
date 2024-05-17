@@ -8,7 +8,7 @@ def main():
     while True:
         print(problem)
 
-        if problem.current_player == 'X':
+        if problem.current_player == 'O':
             action = AlphaBetaSearch.alpha_beta_search(problem)
             problem.make_move(action)
             print(f"Computer places {problem.current_player} at {action}")
