@@ -2,8 +2,8 @@ class Problem:
     def __init__(self, size=8):
         self.size = size
         self.board = [[' ' for _ in range(size)] for _ in range(size)]
-        self.current_player = 'O'
-        # self.AI_player = 'X'
+        self.current_player = 'X'
+        self.AI_player = 'X'
 
     def __str__(self):
         board_str = "  | "
@@ -103,11 +103,11 @@ class Problem:
     def swap_player(self):
         self.current_player = 'O' if self.current_player == 'X' else 'X'
 
-    def evaluate(self, board):
-        return self.evaluate_player(board, 'X')
+    def evaluate(self, board, action):
+        return self.evaluate_player(board, self.AI_player, action)
 
 
-    def evaluate_player(self, board, current_player):
+    def evaluate_player(self, board, current_player, action):
         opponent_player = 'O' if current_player == 'X' else 'X'
         score = 0
         visited = [[False for _ in range(self.size)] for _ in range(self.size)]
@@ -119,8 +119,6 @@ class Problem:
                     vertical = self.check_streak(board, i, j, opponent_player, 1, 0, visited)
                     down_right = self.check_streak(board, i, j, opponent_player, 1, 1, visited)
                     up_right = self.check_streak(board, i, j, opponent_player, -1, 1, visited)
-
-                    print("(",i,",", j,")", horizontal, vertical, down_right, up_right)
 
                     score_of_horizontal = self.score_of_streak(horizontal)
                     score_of_vertical = self.score_of_streak(vertical)
@@ -164,7 +162,7 @@ class Problem:
                             if board[i-up_right][j+up_right] == current_player:
                                 score += score_of_up_right + self.rank_of_place(i-up_right, j+up_right) + self.attack(board, i-up_right, j+up_right, current_player)
                     
-        return score
+        return score if score != 0 else self.rank_of_place(action[0], action[1])
 
     def rank_of_place(self, x, y):
         score = 0
@@ -199,11 +197,11 @@ class Problem:
     
     def score_of_streak(self, streak):
         if streak == 1:
-            return 5
+            return 10
         elif streak == 2:
-            return 25
+            return 35
         elif streak == 3:
-            return 125
+            return 250
         else:
             return 1250
 
