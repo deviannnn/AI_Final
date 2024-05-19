@@ -1,3 +1,5 @@
+import random
+
 class Board:
     def __init__(self, size, state=None):
         self.size = size
@@ -48,7 +50,8 @@ class Problem:
     def __init__(self, size = 8):
         self.size = size
         self.board = Board(size = 8)
-        self.current_player = Problem.X_SYMBOL 
+        self.current_player = Problem.X_SYMBOL
+        self.Human_player = Problem.X_SYMBOL
         self.AI_player = Problem.O_SYMBOL
     
 
@@ -58,6 +61,7 @@ class Problem:
             for j in range(self.size):
                 if state[i][j] == Problem.BLANK_SYMBOL:
                     possible_actions.append((i, j))
+        random.shuffle(possible_actions)
         return possible_actions
 
 
@@ -127,11 +131,17 @@ class Problem:
 
 
     def evaluate(self, state: Board, action):
-        return self.evaluate_player(state.state, self.AI_player, action)
+        e_AI = self.evaluate_player(state.state, self.AI_player, action)
+        e_Human = self.evaluate_player(state.state, self.Human_player, action)
+        
+        if (self.Human_player == Problem.X_SYMBOL):
+            return e_Human - e_AI
+        else:
+            return e_AI - e_Human 
 
-    
+
     def evaluate_player(self, state, current_player, action):
-        opponent_player = 'O' if current_player == 'X' else 'X'
+        opponent_player = Problem.O_SYMBOL if current_player == Problem.X_SYMBOL else Problem.X_SYMBOL
         score = 0
         visited = [[False for _ in range(self.size)] for _ in range(self.size)]
 
@@ -215,7 +225,7 @@ class Problem:
         elif streak == 2:
             score = 35
         elif streak == 3:
-            score = 250
+            score = 500
         else:
             score = 1250
 

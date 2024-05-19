@@ -8,9 +8,11 @@ def main():
     choose = int(input())
 
     if choose == 1:
-        problem.AI_player = 'O'
+        problem.Human_player = Problem.X_SYMBOL
+        problem.AI_player = Problem.O_SYMBOL
     else:
-        problem.AI_player = 'X'
+        problem.Human_player = Problem.O_SYMBOL
+        problem.AI_player = Problem.X_SYMBOL
 
     while True:
         print(problem.board)
