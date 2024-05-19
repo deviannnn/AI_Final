@@ -2,7 +2,7 @@ from problem import Problem
 from search import AlphaBetaSearch
 
 def main():
-    problem = Problem(size = 8)
+    problem = Problem()
 
     print("Do you want to choose X or O?\n 1: X\t2: O")
     choose = int(input())
@@ -13,7 +13,7 @@ def main():
         problem.AI_player = 'X'
 
     while True:
-        print(problem)
+        print(problem.board)
 
         if problem.current_player == problem.AI_player:
             action = AlphaBetaSearch.alpha_beta_search(problem)
@@ -27,12 +27,10 @@ def main():
                 else:
                     print("Invalid move. Please try again!")
 
-        if problem.terminal(problem.board):
-            print(problem)
+        if problem.terminal():
+            print(problem.board)
             print("Game over!")
             break
-
-        problem.swap_player()
 
 if __name__ == "__main__":
     main()

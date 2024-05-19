@@ -1,9 +1,9 @@
-from problem import Problem
+from problem import Problem, Board
 
 class AlphaBetaSearch:
     @staticmethod
     def alpha_beta_search(p: Problem):
-        actions = p.actions(p.get_board())
+        actions = p.actions(p.board.state)
 
         v = float("-inf")
         best_action = None
@@ -11,22 +11,23 @@ class AlphaBetaSearch:
         beta = float("inf")
 
         for action in actions:
-            min_value  = AlphaBetaSearch.min_value(p, p.result(action, p.get_board()), action, alpha, beta, 0)
+            min_value  = AlphaBetaSearch.min_value(p, p.result(action, p.board), action, alpha, beta, 0)
 
             if min_value > v:
                 v = min_value
                 best_action = action
-            alpha = min(alpha, v)
+            
+            print(action, "->", min_value)
 
         return best_action
 
     @staticmethod
-    def max_value(problem: Problem, board, action, alpha, beta, depth):
-        if problem.terminal(board) or depth == 0:
+    def max_value(problem: Problem, board: Board, action, alpha, beta, depth):
+        if problem.terminal() or depth == 0:
             return problem.evaluate(board, action)
         
         v = float('-inf')
-        for action in problem.actions(board):
+        for action in problem.actions(board.state):
             v = max(v, AlphaBetaSearch.min_value(problem, problem.result(action, board), alpha, beta, depth - 1))
             if v >= beta:
                 return v
@@ -34,12 +35,12 @@ class AlphaBetaSearch:
         return v
 
     @staticmethod
-    def min_value(problem: Problem, board, action, alpha, beta, depth):
-        if problem.terminal(board) or depth == 0:
+    def min_value(problem: Problem, board: Board, action, alpha, beta, depth):
+        if problem.terminal() or depth == 0:
             return problem.evaluate(board, action)
         
         v = float('inf')
-        for action in problem.actions(board):
+        for action in problem.actions(board.state):
             v = min(v, AlphaBetaSearch.max_value(problem, problem.result(action, board), alpha, beta, depth - 1))
             if v <= alpha:
                 return v
