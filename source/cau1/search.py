@@ -17,7 +17,7 @@ class AlphaBetaSearch:
                 v = min_value
                 best_action = action
             
-            print(action, "->", min_value)
+            # print(action, "->", min_value)
 
         return best_action
 
