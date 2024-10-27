@@ -132,12 +132,13 @@ class Problem:
 
     def evaluate(self, state: Board, action):
         e_AI = self.evaluate_player(state.state, self.AI_player, action)
-        e_Human = self.evaluate_player(state.state, self.Human_player, action)
+        # e_Human = self.evaluate_player(state.state, self.Human_player, action)
         
-        if (self.Human_player == Problem.X_SYMBOL):
-            return e_Human - e_AI
-        else:
-            return e_AI - e_Human 
+        # if (self.Human_player == Problem.X_SYMBOL):
+        #     return e_Human - e_AI
+        # else:
+        #     return e_AI - e_Human
+        return e_AI
 
 
     def evaluate_player(self, state, current_player, action):
